@@ -11,7 +11,7 @@ else
     exit 1
 fi
 
-# DeelTech Solutions - Main Program Interface
+# DeelTech Solutions – Main Program Interface
 check_license
 DEFAULT_CHOICE=1
 
@@ -19,6 +19,7 @@ while true; do
     echo "=============================================="
     echo "     DEELTECH FACULTY ONBOARDING PROGRAM      "
     echo "=============================================="
+    echo
     echo "1) Run Web Scraper & Name Parser (DEFAULT)"
     echo "2) Manually Add User"
     echo "3) Create Faculty User Accounts"
@@ -34,17 +35,17 @@ while true; do
             echo "[INFO] Running scraper..."
             bash "$SCRIPT_DIR/scraper.sh"
             ;;
-        2) 
+        2)
             echo "[INFO] Starting manual entry..."
             bash "$SCRIPT_DIR/manual_entry.sh"
             ;;
         3)
-            # This is the specific "option there to create user from list"
+            # This is the specific "option three" to create users from list
             echo "[INFO] Processing existing list..."
             bash "$SCRIPT_DIR/batch_process.sh"
             ;;
         4)
-            echo "[INFO] Erasing all Users"
+            echo "[INFO] Erasing all users"
             bash "$SCRIPT_DIR/cleanup.sh"
             ;;
         5)
@@ -55,7 +56,8 @@ while true; do
             echo "[ERROR] Invalid choice."
             ;;
     esac
+
     echo ""
-    read -p "Press Enter to continue..."
-    # clear # Uncomment this line if you want the screen to wipe clean every time
+    read -p "Press Enter to continue..." _
+    # clear  # Uncomment this line if you want the screen to wipe clean every time
 done

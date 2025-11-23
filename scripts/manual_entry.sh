@@ -1,13 +1,13 @@
 #!/bin/bash
 
-#Author: Abdullah Javed
-
-# DeelTech Solutions - Manual User Entry
+# Author: AbdulLah Javed
+# DeelTech Solutions – Manual User Entry
 # Adds a user to the shared faculty list
 
 SCRIPT_DIR="$(dirname "$0")"
 PROJECT_ROOT="$SCRIPT_DIR/.."
-# The file where scraper saves names
+
+# File where scraper saves names
 NAMES_FILE="$PROJECT_ROOT/faculty_names.txt"
 
 echo "--- Manual User Entry ---"
@@ -25,11 +25,12 @@ if [[ -z "$first_name" || -z "$last_name" ]]; then
 fi
 
 # 4. Save to the same file as the scraper
-# We use '>>' to append to the bottom of the file without overwriting it
+# We use >> to append to the bottom of the file without overwriting
 echo "$first_name $last_name" >> "$NAMES_FILE"
 
-echo "[SUCCESS] Added '$first_name $last_name' to $NAMES_FILE"
+echo "[SUCCESS] Added $first_name $last_name to $NAMES_FILE"
 
+# 5. Immediately create the system user too
 if [[ -f "$SCRIPT_DIR/create_user.sh" ]]; then
     bash "$SCRIPT_DIR/create_user.sh" "$first_name" "$last_name"
 else
