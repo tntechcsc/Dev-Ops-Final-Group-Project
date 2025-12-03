@@ -1,54 +1,66 @@
 #!/bin/bash
 
-# DeelTech Solutions - Core User Creation Module
+# DeelTech Solutions – Core User Creation Module (Phase 3)
 # Arguments:
 #   $1 = First Name
 #   $2 = Last Name
 
 # --- Setup Paths ---
-# Use absolute paths relative to this script location
 SCRIPT_DIR="$(dirname "$0")"
 PROJECT_ROOT="$SCRIPT_DIR/.."
 ACCOUNTS_FILE="$PROJECT_ROOT/created_accounts.txt"
 
-first_name=$1
-last_name=$2
+first_name="$1"
+last_name="$2"
 
 # --- Validation ---
 if [[ -z "$first_name" || -z "$last_name" ]]; then
-    echo "[ERROR] Create User module requires First and Last name."
+    echo "[ERROR] Create User module requires first and last name."
+    echo "Usage: $0 <FirstName> <LastName>"
     exit 1
 fi
 
-# --- Logic ---
+# --- Password Generator ---
+generate_password() {
+    # 12-character random password using letters and numbers only
+    tr -dc 'A-Za-z0-9' < /dev/urandom | head -c 12
+}
 
 # 1. Clean inputs (remove special chars)
 clean_first=$(echo "$first_name" | tr -cd '[:alnum:]')
 clean_last=$(echo "$last_name" | tr -cd '[:alnum:]')
 
-# [cite_start]2. Generate Username: first.last (lowercase) [cite: 84]
+# 2. Generate username: first.last (lowercase)
 username=$(echo "${clean_first}.${clean_last}" | tr '[:upper:]' '[:lower:]')
 
-# [cite_start]3. Generate Password: firstnamelastnameDEELTECH (lowercase) [cite: 85, 92]
-password=$(echo "${clean_first}${clean_last}deeltech" | tr '[:upper:]' '[:lower:]')
+# 3. Generate RANDOM 12-character password
+password="$(generate_password)"
 
-# [cite_start]4. Create System Account [cite: 14, 26]
+# 4. Create System Account
 if id "$username" &>/dev/null; then
     echo "[WARN] User '$username' already exists. Skipping."
 else
-    # Create user with home dir
-    useradd -m -s /bin/bash "$username"
-    
-    # Set the password
-    echo "$username:$password" | chpasswd
-    
-    if [[ $? -eq 0 ]]; then
-        echo "[SUCCESS] Created system user: $username"
-        
-        # 5. Log Credentials to file
-        echo "Username: $username | Password: $password" >> "$ACCOUNTS_FILE"
-        echo "[INFO] Credentials saved to created_accounts.txt"
+    # Create user with home directory and bash shell
+    if useradd -m -s /bin/bash -c "${first_name} ${last_name}" "$username"; then
+
+        # Set the password
+        echo "${username}:${password}" | chpasswd
+
+        if [[ $? -eq 0 ]]; then
+            echo "[SUCCESS] Created system user: $username"
+
+            # 5. Log credentials to file
+            # If file doesn't exist yet, add a header row
+            if [[ ! -f "$ACCOUNTS_FILE" ]]; then
+                echo "Username | Password" > "$ACCOUNTS_FILE"
+            fi
+
+            echo "Username: ${username} | Password: ${password}" >> "$ACCOUNTS_FILE"
+            echo "[INFO] Credentials saved to $(basename "$ACCOUNTS_FILE")"
+        else
+            echo "[ERROR] Failed to set password for $username"
+        fi
     else
-        echo "[ERROR] Failed to set password for $username"
+        echo "[ERROR] Failed to create system user '$username'"
     fi
 fi

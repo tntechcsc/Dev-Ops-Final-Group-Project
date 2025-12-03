@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# DeelTech Solutions - Batch User Processor
+# DeelTech Solutions – Batch User Processor
 # Description: Reads faculty_names.txt and creates accounts for everyone listed.
 
 SCRIPT_DIR="$(dirname "$0")"
@@ -9,6 +9,7 @@ NAMES_FILE="$PROJECT_ROOT/faculty_names.txt"
 
 echo "----------------------------------------"
 echo "[INFO] Starting Batch User Creation..."
+echo "----------------------------------------"
 
 # Check if the list exists
 if [[ ! -f "$NAMES_FILE" ]]; then
@@ -21,10 +22,10 @@ fi
 while read -r first_name last_name; do
     # Only process lines that have both names (skips empty lines)
     if [[ -n "$first_name" && -n "$last_name" ]]; then
-        # Call the single user creation script
+        # Call the single-user creation script
         bash "$SCRIPT_DIR/create_user.sh" "$first_name" "$last_name"
     fi
 done < "$NAMES_FILE"
 
 echo "[SUCCESS] Batch processing complete."
-echo "----------------------------------------"
+echo
